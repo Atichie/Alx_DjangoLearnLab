@@ -3,7 +3,7 @@
 Command:
 
 '''python
-books = Book.objects.all()
-for book in books:
-    print(book.title, book.author, book.publc_year)
+from bookshelf.models import Book
+books = Book.objects.get(title="1984")
+print(f"Retrieved Book: {book.title}, {book.author}, {book.publc_year}")
 
