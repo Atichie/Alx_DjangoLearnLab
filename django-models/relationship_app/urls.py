@@ -13,6 +13,6 @@ from .views import CustomLoginView, CustomLogoutView, register
 urlpatterns = [
         path('login/', CustomLoginView.as_view(template_name='relationship_app/login.html'), name='login')
         path('logout/', CustomLogoutView.as_view(template_name='relationship_app/logout.html'), name='logout'),
-        path('register/', register, name='register'),
+        path('register/',views.register, name='register'),
 ]
 
