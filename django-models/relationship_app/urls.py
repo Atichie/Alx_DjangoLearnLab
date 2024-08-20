@@ -42,7 +42,7 @@ urlpatterns = [
 from django.urls import include, path
 
 urlpatterns = [
-        path('relationship_app/', include('relationship_app.urls')),
+        path('relationship_app/', include("add_book/", "edit_book/", "delete_book/")),
 ]
 
 
