@@ -1,16 +1,11 @@
 from django.db import models
 
 # Create your models here
-from django.contrib.auth.models import AbstractUser
-
-class CustomUser(AbstractUser):
-    date_of_birth = models.DateField(null=True, blank=True)
-    profile_photo = models.ImageField(upload_to='profile_photos/', null=True, blank=True)
 
 from django.contrib.auth.models import BaseUserManager
 
 class CustomUserManager(BaseUserManager):
-    def create_user(self, email, date_of_birth-None, password=None, **extra_fields):
+    def create_user(self, email, date_of_birth=None, password=None, **extra_fields):
         if not email:
             raise ValueError('The Email field must be set')
         email = self.normalize_email(email)
@@ -24,7 +19,8 @@ class CustomUserManager(BaseUserManager):
         return self.create_user(email, dte_of_birth, password, **extra_fields)
 
 
-from django.contrib.auth.models import AbstractUser):
+from django.contrib.auth.models import AbstractUser
+class CustomUser(AbstractUser):
     date_of_birth = models.DateField(null=True, blank=True)
     profile_photo = models.ImageField(upload_to='profile_photo/', null=True, blank=True)
     objects = CustomUserManager()
