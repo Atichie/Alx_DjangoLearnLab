@@ -23,7 +23,17 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'xqgwi5c_uqoz-@(*@66lptm)h8ar5vy@jldmr&4h_ssuh98pa2'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
+
+# Use secure browser settings
+SECURE_BROWSER_XSS_FILTER =True
+SECURE_CONTENT_TYPE_MOSNIFF = True
+X_FRAME_OPTIONS = 'DENY' # Prevents your site from being rendered inside an iframe
+
+# Secure cookies
+CSRF_COOKIE_SECURE =True
+SESSION_COOKIE_SECURE True
+SECURE_SSL_REDIRECT = True # Redirect HTTP to HTTPS
 
 ALLOWED_HOSTS = []
 
@@ -50,6 +60,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'csp.middleware.CSPMiddleware',
 ]
 
 ROOT_URLCONF = 'LibraryProject.urls'
@@ -121,4 +132,6 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
-
+CSP_DEFAULT_SRC = ("'self'",)
+CSP_SCRIPT_SRC = ("'self'", 'https://trustedscripts.example.com')
+CSP_STYLE_SRC = ("'self'", 'https://trustedstyles.example.com')

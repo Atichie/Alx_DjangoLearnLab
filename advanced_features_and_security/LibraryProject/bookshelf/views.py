@@ -31,3 +31,10 @@ def edit_book(request, book_id):
 @permission_required('bookshelf.can_delete', raise_exception=True)
 def delete_book(request, book_id):
     pass
+
+from .models import Book
+
+def search_books(request):
+    query = request.GET.get('q')
+    books = Book.objects.filter(title_icontains=query)
+    return render(request, 'bookshelf/book_list.html', {'books': books})
