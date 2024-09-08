@@ -2,6 +2,7 @@ from rest_framework import serializers
 from .models import Author, Book
 from datetime import datetime
 
+
 class BookSerializer(serializers.ModelSerializer):
     class Meta:
         model = Book
@@ -13,7 +14,7 @@ class BookSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Publication year cannot be in the future.")
         return value
 
-class AutthorSerializer(serializers.ModelSerializer):
+class AuthorSerializer(serializers.ModelSerializer):
     books = BookSerializer(many=True, read_only_only=True)
 
     class Meta:
