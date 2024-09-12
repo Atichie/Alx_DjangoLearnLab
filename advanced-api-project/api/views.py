@@ -10,14 +10,16 @@ from django_filters.rest_framework import DjangoFilterBackend
 
 class BookListView(generics.ListAPIView):
     """
-    Retrieves a list of all books.
+    Retrieves a list of books with filtering, searching, and ordering capabilities..
     This view is open to both authenticated and unauthenticated users.
     """
-    queryset = BookSerializer
+    queryset = Book.objects.all()
     serializer_class = BookSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
-    filter_backends = [generics.ListAPIView)
-    filterset_fields = ['publication_year']
+    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
+    filterset_fields = ['title', 'author_name', 'publication_year']
+    search_fields = ['title', 'author_name']
+    ordering_fields = ['title', 'publication_year']
 
 class BookDetailView(generics.RetrieveAPIView):
     """
