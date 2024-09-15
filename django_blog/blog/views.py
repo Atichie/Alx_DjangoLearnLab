@@ -86,6 +86,10 @@ class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     def test_func(self):
         post = self.get_object()
         return self.request.user == post.author
+class CommentCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
+    model = Comment
+    form_class = CommentForm
+    template_name = 'blog/comment_confirm_create.html'
 
 class CommentUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Comment
