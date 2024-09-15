@@ -1,4 +1,6 @@
 from django import forms
+from .models import Post, Tag
+from .models import Comment
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 
@@ -27,3 +29,19 @@ def edit_profile(request):
         else:
             form = UserUpdateForm(instance=request.user)
         return render(request, 'blog/edit_profile.html', {'form': form})
+
+class CommentForm(forms.ModelForm):
+    class Meta:
+        model = Comment
+        fields = ['content']
+        widgets = {
+                'content': forms.Textarea(attrs={'rows': 3, 'placeholder': 'Add a comment...'}),
+        }
+
+
+class PostForm(forms.ModelForm):
+    tags = forms.ModelMultipleChoiceField(queryset=Tag.objects.all(), required=False)
+
+    class Meta:
+        model = Post
+        fields = ['title', 'content', 'tags']
