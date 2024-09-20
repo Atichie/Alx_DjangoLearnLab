@@ -2,10 +2,11 @@ from django.shortcuts import render
 
 # Create your views here.
 from rest_framework import viewsets, permissions, generics
-from .models import Post, Comment
+from .models import Post, Comment, Notification
 from .serializers import PostSerializer, CommentSerializer, ModelSerializer
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
+from .serializers import NotificationSerializer
 
 class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all().order_by('-created_at')
@@ -34,3 +35,36 @@ class FeedView(generics.ListAPIView):
         user = self.request.user
         following_users = user.following.all()
         return Post.objects.filter(author__in=following_users).order_by('-created_at')
+
+class LikePostView(generics.CreateAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request, pk):
+        post = Post.objects.get(pk=pk)
+        Like.objects.get_orcreate(user=request.user, post=post)
+
+        Notification.objects.create(
+                recipient=post.author,
+                actor=request.user,
+                verb='liked your post',
+                target=post
+        )
+        return Response({'message': 'PostLiked.'})
+
+class UnlikePostView(generics.DestroyAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def delete(self, request, pk):
+        post = Post.objects.get(pk=pk)
+        like Like.objects.filter(user=request.user, post=post)
+        if like.exists():
+            like.delete()
+            return Response({'message', 'Post unliked.'})
+        return Response({'message': 'You have not liked this post.'}, status=400)
+
+class NotificationListView(generics.ListAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = NotificationSerializer
+
+    def get_queryset(self):
+        return Notification.objects.filter(recipient=self.request.user).order_by('-timestamp')
