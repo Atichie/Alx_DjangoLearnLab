@@ -2,11 +2,13 @@ from django.shortcuts import render
 
 # Create your views here.
 from rest_framework import viewsets, permissions, generics
-from .models import Post, Comment, Notification
+from .models import Post, Comment, Like
 from .serializers import PostSerializer, CommentSerializer, ModelSerializer
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 from .serializers import NotificationSerializer
+from notifications.models import Notification
+from django.contrib.contenttypes.models import ContentType
 
 class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all().order_by('-created_at')
@@ -40,29 +42,28 @@ class LikePostView(generics.CreateAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request, pk):
-        post = Post.objects.get(pk=pk)
-        Like.objects.get_orcreate(user=request.user, post=post)
+        post = get_object_or_404(Post, pk=pk)
+        like, created = Like.objects.get_or_create(user=request.user, post=post)
 
 
         if created:
-            mmmm
             Notification.objects.create(
-                    mmmmm
                     recipient=post.author,
                     actor=request.user,
                     verb='liked your post',
-                    target=post
+                    target_content_type=ContentType.objects.get_for_model(post),
+                    target_object_id=post.id
             )
             return Response({'message': 'PostLiked.'})
         else:
             return Response({'message': ' You have already liked this post.'}, status=400)
 
-class UnlikePostView(generics.DestroyAPIView):
+class UnlikePostView(generics.GenericAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def delete(self, request, pk):
-        post = Post.objects.get(pk=pk)
-        like Like.objects.filter(user=request.user, post=post)
+        post = get_object_or_404(Post, pk=pk)
+        like = Like.objects.filter(user=request.user, post=post)
         if like.exists():
             like.delete()
             return Response({'message', 'Post unliked.'})
