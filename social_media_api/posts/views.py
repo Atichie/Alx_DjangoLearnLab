@@ -43,13 +43,19 @@ class LikePostView(generics.CreateAPIView):
         post = Post.objects.get(pk=pk)
         Like.objects.get_orcreate(user=request.user, post=post)
 
-        Notification.objects.create(
-                recipient=post.author,
-                actor=request.user,
-                verb='liked your post',
-                target=post
-        )
-        return Response({'message': 'PostLiked.'})
+
+        if created:
+            mmmm
+            Notification.objects.create(
+                    mmmmm
+                    recipient=post.author,
+                    actor=request.user,
+                    verb='liked your post',
+                    target=post
+            )
+            return Response({'message': 'PostLiked.'})
+        else:
+            return Response({'message': ' You have already liked this post.'}, status=400)
 
 class UnlikePostView(generics.DestroyAPIView):
     permission_classes = [permissions.IsAuthenticated]
@@ -62,9 +68,4 @@ class UnlikePostView(generics.DestroyAPIView):
             return Response({'message', 'Post unliked.'})
         return Response({'message': 'You have not liked this post.'}, status=400)
 
-class NotificationListView(generics.ListAPIView):
-    permission_classes = [permissions.IsAuthenticated]
-    serializer_class = NotificationSerializer
 
-    def get_queryset(self):
-        return Notification.objects.filter(recipient=self.request.user).order_by('-timestamp')
